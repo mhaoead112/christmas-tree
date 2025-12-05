@@ -3,19 +3,22 @@ import './App.css';
 
 const App = () => {
   const canvasRef = useRef(null);
+  const audioRef = useRef(null);
   const [currentLyric, setCurrentLyric] = useState('');
   const [displayedLyric, setDisplayedLyric] = useState('');
+  const [isPlaying, setIsPlaying] = useState(false);
   const startTimeRef = useRef(Date.now());
 
   const lyrics = [
-    { time: 2, text: 'A face-on lover' },
-    { time: 4, text: 'With a fire in his heart' },
-    { time: 7, text: 'A man undercover' },
-    { time: 9, text: 'But you tore me apart' },
-    { time: 12, text: '' },
-    { time: 13, text: 'Ooh-ooh' },
-    { time: 16, text: "Now I've found a real love" },
-    { time: 19, text: "You'll never fool me again" },
+    // First 6 seconds are intro
+    { time: 6, text: 'A face-on lover' },
+    { time: 8, text: 'With a fire in his heart' },
+    { time: 11, text: 'A man undercover' },
+    { time: 13, text: 'But you tore me apart' },
+    { time: 16, text: '' },
+    { time: 17, text: 'Ooh-ooh' },
+    { time: 20, text: "Now I've found a real love" },
+    { time: 23, text: "You'll never fool me again" },
   ];
 
   const colors = [
@@ -44,6 +47,36 @@ const App = () => {
 
     return () => clearInterval(interval);
   }, [currentLyric]);
+
+  // Audio control
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // Set audio to be unmuted and autoplay
+    audio.muted = false;
+    audio.volume = 0.5;
+    
+    const playAudio = () => {
+      audio.play().catch(err => console.log('Audio play failed:', err));
+      setIsPlaying(true);
+    };
+
+    // Auto-play on first interaction
+    const handleFirstInteraction = () => {
+      playAudio();
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keypress', handleFirstInteraction);
+    };
+
+    document.addEventListener('click', handleFirstInteraction);
+    document.addEventListener('keypress', handleFirstInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keypress', handleFirstInteraction);
+    };
+  }, []);
 
   // Lyrics timing
   useEffect(() => {
@@ -217,9 +250,39 @@ const App = () => {
 
   return (
     <div className="app">
+      <audio 
+        ref={audioRef} 
+        loop 
+        volume="0.5"
+        preload="auto"
+      >
+        <source 
+          src="/Download.mp3" 
+          type="audio/mpeg" 
+        />
+        Your browser does not support the audio element.
+      </audio>
       <canvas ref={canvasRef} className="canvas"></canvas>
       <div className="lyrics-container">
         <p className="lyrics">{displayedLyric}</p>
+      </div>
+      <div className="audio-controls">
+        <button 
+          onClick={() => {
+            if (audioRef.current) {
+              if (isPlaying) {
+                audioRef.current.pause();
+                setIsPlaying(false);
+              } else {
+                audioRef.current.play();
+                setIsPlaying(true);
+              }
+            }
+          }}
+          className="play-button"
+        >
+          {isPlaying ? '🔊 Playing' : '🔇 Muted'}
+        </button>
       </div>
     </div>
   );
