@@ -1,0 +1,72 @@
+.app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: rgb(10, 10, 15);
+  overflow: hidden;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.lyrics-container {
+  position: absolute;
+  bottom: 200px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.lyrics {
+  font-size: 48px;
+  font-weight: 600;
+  color: #64ff96;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(100, 255, 150, 0.5),
+               0 0 20px rgba(100, 255, 150, 0.3);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  letter-spacing: 1px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .lyrics {
+    font-size: 32px;
+    padding: 0 20px;
+  }
+  
+  .lyrics-container {
+    bottom: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lyrics {
+    font-size: 24px;
+  }
+  
+  .lyrics-container {
+    bottom: 100px;
+  }
+}
